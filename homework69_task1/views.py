@@ -5,7 +5,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 
 
 # Create your views here.
-def add(request):
+def get_data(request):
     if request.body:
         content = json.loads(request.body)
         a = content.get('A')
@@ -17,62 +17,33 @@ def add(request):
             b = int(b)
         except ValueError:
             return HttpResponseBadRequest('A or B is not a number')
-        result = a + b
+        return a, b
+    else:
+        return HttpResponseBadRequest('Missing Data')
+
+
+def add(request):
+    numbers = get_data(request)
+    result = numbers[0] + numbers[1]
     return JsonResponse({'answer': result})
 
 
 def subtract(request):
-    if request.body:
-        content = json.loads(request.body)
-        a = content.get('A')
-        b = content.get('B')
-        if a is None or b is None:
-            return HttpResponseBadRequest('Missing A or B')
-        try:
-            a = int(a)
-            b = int(b)
-        except ValueError:
-            return HttpResponseBadRequest('A or B is not a number')
-        result = a - b
+    numbers = get_data(request)
+    result = numbers[0] - numbers[1]
     return JsonResponse({'answer': result})
 
 
 def multiply(request):
-    if request.body:
-        content = json.loads(request.body)
-        a = content.get('A')
-        b = content.get('B')
-        if a is None or b is None:
-            return HttpResponseBadRequest('Missing A or B')
-        try:
-            a = int(a)
-            b = int(b)
-        except ValueError:
-            return HttpResponseBadRequest('A or B is not a number')
-        result = a * b
+    numbers = get_data(request)
+    result = numbers[0] * numbers[1]
     return JsonResponse({'answer': result})
 
 
 def divide(request):
-    if request.body:
-        content = json.loads(request.body)
-        a = content.get('A')
-        b = content.get('B')
-        if a is None or b is None:
-            return HttpResponseBadRequest('Missing A or B')
-        try:
-            a = int(a)
-            b = int(b)
-        except ValueError:
-            return HttpResponseBadRequest('A or B is not a number')
-        if b == 0:
-            return HttpResponseBadRequest('Fatal Error. Division by zero')
-        result = a / b
-    return JsonResponse({'answer': result})
-
-
-@ensure_csrf_cookie
-def get_token_view(request, *args, **kwargs):
-    if request.method == 'GET':
-        return HttpResponse()
-    return HttpResponseNotAllowed('Only GET request are allowed')
+    numbers = get_data(request)
+    if numbers[1] == 0:
+        return HttpResponseBadRequest('Fatal Error. Division by zero')
+    else:
+        result = numbers[0] / numbers[1]
+        return JsonResponse({'answer': result})
