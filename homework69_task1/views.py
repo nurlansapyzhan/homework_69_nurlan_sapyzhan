@@ -21,6 +21,22 @@ def add(request):
     return JsonResponse({'answer': result})
 
 
+def subtract(request):
+    if request.body:
+        content = json.loads(request.body)
+        a = content.get('A')
+        b = content.get('B')
+        if a is None or b is None:
+            return HttpResponseBadRequest('Missing A or B')
+        try:
+            a = int(a)
+            b = int(b)
+        except ValueError:
+            return HttpResponseBadRequest('A or B is not a number')
+        result = a - b
+    return JsonResponse({'answer': result})
+
+
 @ensure_csrf_cookie
 def get_token_view(request, *args, **kwargs):
     if request.method == 'GET':
