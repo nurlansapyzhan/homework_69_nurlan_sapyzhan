@@ -53,8 +53,9 @@
                 success: function (data) {
                     $("#result").removeClass("error").addClass("success").text("Result: " + data.answer).css('color', 'green')
                 },
-                error: function () {
-                    $("#result").removeClass("success").addClass("error").text('Error').css('color', 'red');
+                error: function (data) {
+                    $("#result").removeClass("success").addClass("error").text('Error: ' + data.responseText).css('color', 'red');
+                    console.log(data)
                 }
             });
         });
